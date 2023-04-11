@@ -1,3 +1,7 @@
+rule all:
+    input:
+        "results/sequence_accessions"
+
 rule gisaid:
     input:
         "data/gisaid/small_gisaid_metadata_2022-03-04.tsv"
@@ -21,7 +25,6 @@ rule subsample_gis_owid:
     output:
         "results/subsampled_gisaid_metadata.tsv"
     shell:
-<----- lots of undefined options that need defining here ------->
         "shell/subsample_gis_casedata/case_incidence-informed_subsampling.R <variant> <target_number_of_sequences> --start_month <%Y-%m> --end-month <%Y-%m> --metadata_infile results/processed_gisaid_metadata.tsv --case_data_infile results/processed_owid_case_data.csv --outfile {output}"
 
 rule get_accession_ids:
@@ -30,13 +33,21 @@ rule get_accession_ids:
     output:
         "results/processed_owid_case_data_seqids.csv"
     shell:
-        <Script to extract second column only; Accession.ID> -------------------------------
+        ""
 
 rule sequence_accessions:
     input:
         gis="results/subsampled_gisaid_metadata.tsv",
         seqis="results/processed_owid_case_data_seqids.csv"
     output:
-        "results/sequence_accessions" --------------------------------
+        "results/sequence_accessions"
     shell:
         "shell/seq_accessions/extract_accessions.sh -i {input.gis} {input.seqid}"
+
+rule gisaid_input:
+    output:
+        "data/gisaid/small_gisaid_metadata_2022-03-04.tsv",
+
+rule owid_input:
+    output:
+        "data/owid/small_owid-covid-data.csv"
