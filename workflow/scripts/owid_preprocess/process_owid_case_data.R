@@ -1,6 +1,10 @@
 #!/usr/bin/env Rscript
-suppressPackageStartupMessages(library(argparser))
-suppressPackageStartupMessages(library(dplyr))
+
+options(repos = list(CRAN="http://cran.rstudio.com/"))
+install.packages("pacman")
+pacman::p_load("argparser", "dplyr")
+#suppressPackageStartupMessages(library(argparser))
+#suppressPackageStartupMessages(library(dplyr))
 
 ## read in command line arguments
 p <- arg_parser('Preprocess OWID case data')
@@ -28,7 +32,7 @@ owid_case_data.df <- owid_case_data.df %>%
   filter(location != 'International' & !startsWith(iso_code, 'OWID'))
 
 ## assume NA to be 0
-owid_case_data.df[is.na(owid_case_data.df$new_cases),]$new_cases <- 0
+owid_case_data.df$new_cases[is.na(owid_case_data.df$new_cases)] <- 0
 
 ## write to file
 output_file <- argv$outfile

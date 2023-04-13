@@ -1,8 +1,13 @@
 #!/usr/bin/env Rscript
-suppressPackageStartupMessages(library(argparser))
-suppressPackageStartupMessages(library(dplyr))
-suppressPackageStartupMessages(library(data.table))
-suppressPackageStartupMessages(library(stringr))
+
+options(repos = list(CRAN="http://cran.rstudio.com/"))
+install.packages("pacman")
+pacman::p_load("argparser", "dplyr", "data.table", "stringr", "R.utils")
+
+#suppressPackageStartupMessages(library(argparser))
+#suppressPackageStartupMessages(library(dplyr))
+#suppressPackageStartupMessages(library(data.table))
+#suppressPackageStartupMessages(library(stringr))
 
 ## read in command line arguments
 p <- arg_parser('Preprocess GISAID metadata')

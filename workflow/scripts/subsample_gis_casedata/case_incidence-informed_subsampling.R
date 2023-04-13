@@ -1,10 +1,15 @@
 #!/usr/bin/env Rscript
-suppressPackageStartupMessages(library(argparser))
-suppressPackageStartupMessages(library(dplyr))
-suppressPackageStartupMessages(library(data.table))
-suppressPackageStartupMessages(library(stringr))
-suppressPackageStartupMessages(library(lubridate))
-suppressPackageStartupMessages(library(tidyr))
+
+options(repos = list(CRAN="http://cran.rstudio.com/"))
+install.packages("pacman")
+pacman::p_load("argparser", "dplyr", "data.table", "stringr", "lubridate", "tidyr")
+
+#suppressPackageStartupMessages(library(argparser))
+#suppressPackageStartupMessages(library(dplyr))
+#suppressPackageStartupMessages(library(data.table))
+#suppressPackageStartupMessages(library(stringr))
+#suppressPackageStartupMessages(library(lubridate))
+#suppressPackageStartupMessages(library(tidyr))
 
 ## read in command line arguments
 p <- arg_parser('Case incidence-informed subsampling at monthly and country-level (variant-specific, even-temporally-distributed)')
@@ -71,34 +76,33 @@ metadata_infile <- as.character(argv$metadata_infile)
 gisaid_metadata.df <- read.csv(metadata_infile, sep='\t', stringsAsFactors=FALSE)
 
 ## read in OWID data
-# owid_case_data_infile <- argv$case_data_infile
-owid_case_data_infile <- './test_data/data/processed_owid_case_data.csv'
+owid_case_data_infile <- argv$case_data_infile
 owid_case_data.df <- read.csv(owid_case_data_infile, sep=',', stringsAsFactors=FALSE)
 
 ## apply common country names mapping
 ## TODO: create separate script for this
 # setdiff(unique(gisaid_metadata.df$Country), unique(owid_case_data.df$location))
-gisaid_metadata.df[gisaid_metadata.df$Country == 'USA',]$Country <- 'United States'
-gisaid_metadata.df[gisaid_metadata.df$Country == 'Bonaire',]$Country <- 'Bonaire Sint Eustatius and Saba'
-gisaid_metadata.df[gisaid_metadata.df$Country == 'Sint Eustatius',]$Country <- 'Bonaire Sint Eustatius and Saba'
-gisaid_metadata.df[gisaid_metadata.df$Country == 'Guadeloupe',]$Country <- 'France'
-gisaid_metadata.df[gisaid_metadata.df$Country == 'Martinique',]$Country <- 'France'
-gisaid_metadata.df[gisaid_metadata.df$Country == 'U.S. Virgin Islands',]$Country <- 'United States Virgin Islands'
-gisaid_metadata.df[gisaid_metadata.df$Country == 'Mayotte',]$Country <- 'France'
-gisaid_metadata.df[gisaid_metadata.df$Country == 'Canary Islands',]$Country <- 'Spain'
-gisaid_metadata.df[gisaid_metadata.df$Country == 'Saint Barthelemy',]$Country <- 'France'
-gisaid_metadata.df[gisaid_metadata.df$Country == 'Cabo Verde',]$Country <- 'Cape Verde'
-gisaid_metadata.df[gisaid_metadata.df$Country == 'French Guiana',]$Country <- 'France'
-gisaid_metadata.df[gisaid_metadata.df$Country == 'Saint Martin',]$Country <- 'France'
-gisaid_metadata.df[gisaid_metadata.df$Country == 'Reunion',]$Country <- 'France'
-gisaid_metadata.df[gisaid_metadata.df$Country == 'Crimea',]$Country <- 'Ukraine'
-owid_case_data.df[owid_case_data.df$location == 'Czechia',]$location <- 'Czech Republic'
-owid_case_data.df[owid_case_data.df$location == 'Sint Maarten (Dutch part)',]$location <- 'Sint Maarten'
-owid_case_data.df[owid_case_data.df$location == 'Democratic Republic of Congo',]$location <- 'Democratic Republic of the Congo'
-owid_case_data.df[owid_case_data.df$location == 'Congo',]$location <- 'Republic of the Congo'
-owid_case_data.df[owid_case_data.df$location == 'Timor',]$location <- 'Timor-Leste'
-owid_case_data.df[owid_case_data.df$location == 'Bahamas',]$location <- 'The Bahamas'
-owid_case_data.df[owid_case_data.df$location == 'Wallis and Futuna',]$location <- 'Wallis and Futuna Islands'
+gisaid_metadata.df$Country[gisaid_metadata.df$Country == 'USA'] <- 'United States'
+gisaid_metadata.df$Country[gisaid_metadata.df$Country == 'Bonaire'] <- 'Bonaire Sint Eustatius and Saba'
+gisaid_metadata.df$Country[gisaid_metadata.df$Country == 'Sint Eustatius'] <- 'Bonaire Sint Eustatius and Saba'
+gisaid_metadata.df$Country[gisaid_metadata.df$Country == 'Guadeloupe'] <- 'France'
+gisaid_metadata.df$Country[gisaid_metadata.df$Country == 'Martinique'] <- 'France'
+gisaid_metadata.df$Country[gisaid_metadata.df$Country == 'U.S. Virgin Islands'] <- 'United States Virgin Islands'
+gisaid_metadata.df$Country[gisaid_metadata.df$Country == 'Mayotte'] <- 'France'
+gisaid_metadata.df$Country[gisaid_metadata.df$Country == 'Canary Islands'] <- 'Spain'
+gisaid_metadata.df$Country[gisaid_metadata.df$Country == 'Saint Barthelemy'] <- 'France'
+gisaid_metadata.df$Country[gisaid_metadata.df$Country == 'Cabo Verde'] <- 'Cape Verde'
+gisaid_metadata.df$Country[gisaid_metadata.df$Country == 'French Guiana'] <- 'France'
+gisaid_metadata.df$Country[gisaid_metadata.df$Country == 'Saint Martin'] <- 'France'
+gisaid_metadata.df$Country[gisaid_metadata.df$Country == 'Reunion'] <- 'France'
+gisaid_metadata.df$Country[gisaid_metadata.df$Country == 'Crimea'] <- 'Ukraine'
+owid_case_data.df$location[owid_case_data.df$location == 'Czechia'] <- 'Czech Republic'
+owid_case_data.df$location[owid_case_data.df$location == 'Sint Maarten (Dutch part)'] <- 'Sint Maarten'
+owid_case_data.df$location[owid_case_data.df$location == 'Democratic Republic of Congo'] <- 'Democratic Republic of the Congo'
+owid_case_data.df$location[owid_case_data.df$location == 'Congo'] <- 'Republic of the Congo'
+owid_case_data.df$location[owid_case_data.df$location == 'Timor'] <- 'Timor-Leste'
+owid_case_data.df$location[owid_case_data.df$location == 'Bahamas'] <- 'The Bahamas'
+owid_case_data.df$location[owid_case_data.df$location == 'Wallis and Futuna'] <- 'Wallis and Futuna Islands'
 
 ## calculate monthly/country-level variant proportion
 gisaid_metadata_agg.df <- gisaid_metadata.df %>%
