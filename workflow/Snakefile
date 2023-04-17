@@ -87,7 +87,7 @@ rule nextclade:
         "results/nextclade/nextclade.tsv"
     params:
         indataset="results/nextclade/data/sars-cov-2/",
-        outdir="results/nextclade/"
+        outdir = lambda w, input: os.path.splitext(input[0])[0]
     log:
         "logs/nextclade.log"
     benchmark:
