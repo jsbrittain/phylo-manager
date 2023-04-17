@@ -1,14 +1,22 @@
+#from snakemake.utils import validate
+
 configfile: "config/config.yaml"
+#validate(config, "../config/config.schema.yaml")
 
 rule all:
     input:
-        "results/selected_gisaid_metadata.txt",
-        "results/subsampled_passed_sequences.fasta"
+        "results/subsampled_sequence_ids.txt",
+        "results/nextalign.fasta",
+    default_target:
+        True
 
 rule gisaid:
     input:
-        expand("resources/gisaid/{infile}",
-               infile=config["gisaid_infile"])
+        expand(
+            "results/{outdir}{infile}",
+            outdir=config["gisaid"]["outdir"],
+            infile=config["gisaid"]["infile"],
+        )
     output:
         "results/processed_gisaid_metadata.tsv"
     log:
@@ -22,8 +30,11 @@ rule gisaid:
 
 rule owid:
     input:
-        expand("resources/owid/{infile}",
-               infile=config["owid_infile"])
+        expand(
+            "results/{outdir}{infile}",
+            outdir=config["owid"]["outdir"],
+            infile=config["owid"]["infile"],
+        )
     output:
         "results/processed_owid_case_data.csv"
     log:
@@ -42,10 +53,10 @@ rule subsample_gis_owid:
     output:
         "results/subsampled_gisaid_metadata.tsv"
     params:
-        variant = config["variant"],
-        target_number_of_sequences = config["target_number_of_sequences"],
-        start_month = config["start_month"],
-        end_month = config["end_month"]
+        variant = config["subsampling"]["variant"],
+        target_number_of_sequences = config["subsampling"]["target_number_of_sequences"],
+        start_month = config["subsampling"]["start_month"],
+        end_month = config["subsampling"]["end_month"]
     log:
         "logs/subsample_gis_owid.log"
     benchmark:
@@ -132,7 +143,7 @@ rule extract_nextclade_sequences:
 
 rule add_reference_sequence:
     input:
-        ref="resources/references_seqs/reference.fasta",
+        ref=expand("results/{outdir}{infile}", outdir=config["reference_seqs"]["outdir"], infile=config["reference_seqs"]["infile"]),
         clean="results/subsampled_passed_sequences.fasta"
     output:
         "results/subsampled_passed_sequences_refAdded.fasta"
@@ -143,7 +154,7 @@ rule add_reference_sequence:
     conda:
         "envs/add_reference_sequence.yaml"
     shell:
-        "workflow/scripts/add_ref.sh -r {input.ref} -i {input.clean}"
+        "cat {input.ref} {input.clean} > {output}"
 
 rule nextalign:
     input:
@@ -159,14 +170,18 @@ rule nextalign:
     shell:
         "workflow/scripts/nextalign/run_nextalign.sh -i {input}"
 
-rule reference_sequences:
-    output:
-        "resources/references_seqs/reference.fasta"
+module get_reference_seqs:
+    snakefile: "modules/get_remote_file.snk"
+    config: config["reference_seqs"]
 
-rule gisaid_input:
-    output:
-        expand("resources/gisaid/{infile}", infile=config["gisaid_infile"])
+module get_owid:
+    snakefile: "modules/get_remote_file.snk"
+    config: config["owid"]
 
-rule owid_input:
-    output:
-        expand("resources/owid/{infile}", infile=config["owid_infile"])
+module get_gisaid:
+    snakefile: "modules/get_remote_file.snk"
+    config: config["gisaid"]
+
+use rule * from get_reference_seqs as get_reference_seqs_*
+use rule * from get_owid as get_owid_*
+use rule * from get_gisaid as get_gisaid_*

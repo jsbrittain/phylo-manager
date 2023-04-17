@@ -1,11 +1,21 @@
-gisaid_infile : "gisaid_metadata_2022-03-04.tsv"
+owid :
+  infile : "owid-covid-data.csv"
+  outdir : "owid/"
+  address : "https://www.dropbox.com/s/x8yvgjd7ug1gbxg/owid-covid-data.csv?dl=1"
 
-owid_infile : "owid-covid-data.csv"
+gisaid :
+  infile : "gisaid_metadata_2022-03-04.tsv"
+  outdir : "gisaid/"
+  address : "https://www.dropbox.com/s/bfiq33slgar0fo7/gisaid_metadata_2022-03-04.tar.gz?dl=1"
 
-variant : "Delta"
+reference_seqs :
+  infile : "reference.fasta"
+  outdir : "reference_seqs/"
+  address : "https://www.dropbox.com/s/comc2vv39m3mdao/reference.fasta?dl=1"
+  origin : "https://www.ncbi.nlm.nih.gov/nuccore/MN908947"
 
-target_number_of_sequences : 5000
-
-start_month : "2020-08"
-
-end_month : "2021-08"
+subsampling :
+  variant : "Delta"
+  target_number_of_sequences : 5000
+  start_month : "2020-08"
+  end_month : "2021-08"

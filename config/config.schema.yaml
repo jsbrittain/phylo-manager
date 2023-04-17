@@ -1,0 +1,36 @@
+$schema: "https://json-schema.org/draft-06/schema"
+description: Phylogenetic workflow
+properties:
+  gisaid_infile:
+    type: string
+    description: gisaid filename
+  gisaid_http:
+    type: string
+    description: gisaid remote location
+  owid_infile:
+    type: string
+    description: owid filename
+  owid_http:
+    type: string
+    description: owid remote location
+  reference_seqs_http:
+    type: string
+    description: reference sequences remote location
+  variant:
+    type: string
+    description: strain variant identifier
+  target_number_of_sequences:
+    type: number
+    description: Number of sequences to target
+  start_month:
+    type: string
+    description: Start month for analysis
+  end_month:
+    type: string
+    description: End month for analysis
+
+required:
+  - variant : "Delta"
+  - target_number_of_sequences : 5000
+  - start_month : "2020-08"
+  - end_month : "2021-08"
