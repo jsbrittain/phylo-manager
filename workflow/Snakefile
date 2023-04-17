@@ -82,11 +82,11 @@ rule seq_accessions:
 
 rule nextclade:
     input:
-        "resources/subsampled_gisaid/subsampled_sequences.fasta"
+        "results/gisaid_subsampled_seqs/subsampled_sequences.fasta"
     output:
         "results/nextclade/nextclade.tsv"
     params:
-        indataset="resources/nextclade/data/sars-cov-2/",
+        indataset="results/nextclade/data/sars-cov-2/",
         outdir="results/nextclade/"
     log:
         "logs/nextclade.log"
@@ -129,7 +129,7 @@ rule extract_gisaid_by_seq_name:
 rule extract_nextclade_sequences:
     input:
         seqids="results/subsampled_passed_seq_ids.txt",
-        fasta="resources/subsampled_gisaid/subsampled_sequences.fasta"
+        fasta="results/gisaid_subsampled_seqs/subsampled_sequences.fasta"
     output:
         "results/subsampled_passed_sequences.fasta"
     log:
@@ -182,6 +182,11 @@ module get_gisaid:
     snakefile: "modules/get_remote_file.snk"
     config: config["gisaid"]
 
+module get_gisaid_subsampled_seqs:
+    snakefile: "modules/get_remote_file.snk"
+    config: config["gisaid_subsampled_seqs"]
+
 use rule * from get_reference_seqs as get_reference_seqs_*
 use rule * from get_owid as get_owid_*
 use rule * from get_gisaid as get_gisaid_*
+use rule * from get_gisaid_subsampled_seqs as get_gisaid_subsampled_seqs_*

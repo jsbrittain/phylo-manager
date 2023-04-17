@@ -14,6 +14,11 @@ reference_seqs :
   address : "https://www.dropbox.com/s/comc2vv39m3mdao/reference.fasta?dl=1"
   origin : "https://www.ncbi.nlm.nih.gov/nuccore/MN908947"
 
+gisaid_subsampled_seqs : # Temporary - should be generated as part of workflow
+  infile : "subsampled_sequences.fasta"
+  outdir : "gisaid_subsampled_seqs/"
+  address : "https://www.dropbox.com/s/jzljyxbedesm5k3/subsampled_sequences_Delta_n5000_2020-08_2021-08.fasta?dl=1"
+
 subsampling :
   variant : "Delta"
   target_number_of_sequences : 5000
