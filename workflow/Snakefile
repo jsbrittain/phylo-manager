@@ -171,19 +171,39 @@ rule nextalign:
         "workflow/scripts/nextalign/run_nextalign.sh -i {input}"
 
 module get_reference_seqs:
-    snakefile: "modules/get_remote_file.snk"
+    snakefile:
+        github(
+            "jsbrittain/phylo-manager",
+            path="workflow/modules/get_remote_file.snk",
+            branch="main",
+        )
     config: config["reference_seqs"]
 
 module get_owid:
-    snakefile: "modules/get_remote_file.snk"
+    snakefile:
+        github(
+            "jsbrittain/phylo-manager",
+            path="workflow/modules/get_remote_file.snk",
+            branch="main",
+        )
     config: config["owid"]
 
 module get_gisaid:
-    snakefile: "modules/get_remote_file.snk"
+    snakefile:
+        github(
+            "jsbrittain/phylo-manager",
+            path="workflow/modules/get_remote_file.snk",
+            branch="main",
+        )
     config: config["gisaid"]
 
 module get_gisaid_subsampled_seqs:
-    snakefile: "modules/get_remote_file.snk"
+    snakefile:
+        github(
+            "jsbrittain/phylo-manager",
+            path="workflow/modules/get_remote_file.snk",
+            branch="main",
+        )
     config: config["gisaid_subsampled_seqs"]
 
 use rule * from get_reference_seqs as get_reference_seqs_*
