@@ -98,4 +98,4 @@ rule untar:
     shell:
         "tar xvf {input} --directory results/{params.outdir} && rm {input}"
 
-ruleorder: rename > untar
+ruleorder: gunzip > rename > untar

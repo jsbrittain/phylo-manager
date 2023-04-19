@@ -1,6 +1,6 @@
-#from snakemake.utils import validate
-
 configfile: "config/config.yaml"
+
+#from snakemake.utils import validate
 #validate(config, "../config/config.schema.yaml")
 
 rule all:
@@ -178,6 +178,7 @@ module get_reference_seqs:
             branch="main",
         )
     config: config["reference_seqs"]
+use rule * from get_reference_seqs as get_reference_seqs_*
 
 module get_owid:
     snakefile:
@@ -187,6 +188,7 @@ module get_owid:
             branch="main",
         )
     config: config["owid"]
+use rule * from get_owid as get_owid_*
 
 module get_gisaid:
     snakefile:
@@ -196,17 +198,14 @@ module get_gisaid:
             branch="main",
         )
     config: config["gisaid"]
+use rule * from get_gisaid as get_gisaid_*
 
 module get_gisaid_subsampled_seqs:
     snakefile:
         github(
             "jsbrittain/phylo-manager",
             path="workflow/modules/get_remote_file.snk",
-            branch="main",
+            commit="4867c3a",
         )
     config: config["gisaid_subsampled_seqs"]
-
-use rule * from get_reference_seqs as get_reference_seqs_*
-use rule * from get_owid as get_owid_*
-use rule * from get_gisaid as get_gisaid_*
 use rule * from get_gisaid_subsampled_seqs as get_gisaid_subsampled_seqs_*
