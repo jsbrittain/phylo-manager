@@ -1,23 +1,29 @@
-owid :
+get_owid :
   infile : "owid-covid-data.csv"
   outdir : "owid/"
   address : "https://www.dropbox.com/s/x8yvgjd7ug1gbxg/owid-covid-data.csv?dl=1"
 
-gisaid :
+get_gisaid :
   infile : "gisaid_metadata_2022-03-04.tsv"
   outdir : "gisaid/"
   address : "https://www.dropbox.com/s/bfiq33slgar0fo7/gisaid_metadata_2022-03-04.tar.gz?dl=1"
 
-reference_seqs :
+get_reference_seqs :
   infile : "reference.fasta"
   outdir : "reference_seqs/"
   address : "https://www.dropbox.com/s/comc2vv39m3mdao/reference.fasta?dl=1"
   origin : "https://www.ncbi.nlm.nih.gov/nuccore/MN908947"
 
-gisaid_subsampled_seqs : # Temporary - should be generated as part of workflow
+get_gisaid_subsampled_seqs : # Temporary - should be generated as part of workflow
   infile : "subsampled_sequences.fasta"
   outdir : "gisaid_subsampled_seqs/"
   address : "https://www.dropbox.com/s/jzljyxbedesm5k3/subsampled_sequences_Delta_n5000_2020-08_2021-08.fasta?dl=1"
+
+gisaid :
+  input_namespace : "results/gisaid/"
+  input_filename : "gisaid_metadata_2022-03-04.tsv"
+  output_namespace : "results/gisaid_subsampled_seqs/"
+  output_filename : "processed_gisaid_metadata.tsv"
 
 subsampling :
   variant : "Delta"

@@ -1,44 +1,22 @@
 configfile: "config/config.yaml"
 
-#from snakemake.utils import validate
-#validate(config, "../config/config.schema.yaml")
-
 rule all:
     input:
         "results/subsampled_sequence_ids.txt",
         "results/nextalign.fasta",
-    default_target:
-        True
-
-rule gisaid:
-    input:
-        expand(
-            "results/{outdir}{infile}",
-            outdir=config["gisaid"]["outdir"],
-            infile=config["gisaid"]["infile"],
-        )
-    output:
-        "results/processed_gisaid_metadata.tsv"
-    log:
-        "logs/gisaid.log"
-    benchmark:
-        "benchmarks/gisaid.txt"
-    conda:
-        "envs/gisaid.yaml"
-    shell:
-        "workflow/scripts/gisaid_preprocess/process_gisaid_metadata.R {input} --outfile {output}"
+    default_target: True
 
 rule owid:
     input:
         expand(
             "results/{outdir}{infile}",
-            outdir=config["owid"]["outdir"],
-            infile=config["owid"]["infile"],
-        )
+            outdir=config["get_owid"]["outdir"],
+            infile=config["get_owid"]["infile"],
+        ),
     output:
-        "results/processed_owid_case_data.csv"
+        "results/processed_owid_case_data.csv",
     log:
-        "logs/owid.log"
+        "logs/owid.log",
     benchmark:
         "benchmarks/owid.txt"
     conda:
@@ -49,30 +27,31 @@ rule owid:
 rule subsample_gis_owid:
     input:
         gis="results/processed_gisaid_metadata.tsv",
-        owid="results/processed_owid_case_data.csv"
+        owid="results/processed_owid_case_data.csv",
     output:
-        "results/subsampled_gisaid_metadata.tsv"
+        "results/subsampled_gisaid_metadata.tsv",
     params:
-        variant = config["subsampling"]["variant"],
-        target_number_of_sequences = config["subsampling"]["target_number_of_sequences"],
-        start_month = config["subsampling"]["start_month"],
-        end_month = config["subsampling"]["end_month"]
+        variant=config["subsampling"]["variant"],
+        target_number_of_sequences=config["subsampling"]["target_number_of_sequences"],
+        start_month=config["subsampling"]["start_month"],
+        end_month=config["subsampling"]["end_month"],
     log:
-        "logs/subsample_gis_owid.log"
+        "logs/subsample_gis_owid.log",
     benchmark:
         "benchmarks/subsample_gis_owid.txt"
     conda:
         "envs/subsample_gis_owid.yaml"
     shell:
-        "workflow/scripts/subsample_gis_casedata/case_incidence-informed_subsampling.R {params.variant} {params.target_number_of_sequences} --start_month \"{params.start_month}\" --end_month \"{params.end_month}\" --metadata_infile {input.gis} --case_data_infile {input.owid} --outfile {output}"
+        'workflow/scripts/subsample_gis_casedata/case_incidence-informed_subsampling.R {params.variant} {params.target_number_of_sequences} --start_month "{params.start_month}" --end_month "{params.end_month}" --metadata_infile {input.gis} --case_data_infile {input.owid} --outfile {output}'
+
 
 rule seq_accessions:
     input:
-        "results/subsampled_gisaid_metadata.tsv"
+        "results/subsampled_gisaid_metadata.tsv",
     output:
-        "results/subsampled_sequence_ids.txt"
+        "results/subsampled_sequence_ids.txt",
     log:
-        "logs/seq_accessions.log"
+        "logs/seq_accessions.log",
     benchmark:
         "benchmarks/seq_accessions.txt"
     conda:
@@ -80,16 +59,17 @@ rule seq_accessions:
     shell:
         "workflow/scripts/seq_accessions/extract_accessions.sh -i {input} -o {output}"
 
+
 rule nextclade:
     input:
-        "results/gisaid_subsampled_seqs/subsampled_sequences.fasta"
+        "results/gisaid_subsampled_seqs/subsampled_sequences.fasta",
     output:
-        "results/nextclade/nextclade.tsv"
+        "results/nextclade/nextclade.tsv",
     params:
         indataset="results/nextclade/data/sars-cov-2/",
-        outdir = lambda w, input: os.path.splitext(input[0])[0]
+        outdir=lambda w, input: os.path.splitext(input[0])[0],
     log:
-        "logs/nextclade.log"
+        "logs/nextclade.log",
     benchmark:
         "benchmarks/nextclade.txt"
     conda:
@@ -97,13 +77,14 @@ rule nextclade:
     shell:
         "nextclade run --in-order --output-all={params.outdir} --input-dataset {params.indataset} {input}"
 
+
 rule extract_nextclade_seq_names:
     input:
-        "results/nextclade/nextclade.tsv"
+        "results/nextclade/nextclade.tsv",
     output:
-        "results/subsampled_passed_seq_ids.txt"
+        "results/subsampled_passed_seq_ids.txt",
     log:
-        "logs/extract_nextclade_seq_names.log"
+        "logs/extract_nextclade_seq_names.log",
     benchmark:
         "benchmarks/extract_nextclade_seq_names.txt"
     conda:
@@ -111,14 +92,15 @@ rule extract_nextclade_seq_names:
     shell:
         "workflow/scripts/extract_nextclade_seq_names/extract_nextclade_seq_names.sh -i {input} -o {output}"
 
+
 rule extract_gisaid_by_seq_name:
     input:
         seqids="results/subsampled_passed_seq_ids.txt",
-        gisaid="results/subsampled_gisaid_metadata.tsv"
+        gisaid="results/subsampled_gisaid_metadata.tsv",
     output:
-        "results/selected_gisaid_metadata.txt"
+        "results/selected_gisaid_metadata.txt",
     log:
-        "logs/extract_gisaid_by_seq_name.log"
+        "logs/extract_gisaid_by_seq_name.log",
     benchmark:
         "benchmarks/extract_gisaid_by_seq_name.txt"
     conda:
@@ -126,14 +108,15 @@ rule extract_gisaid_by_seq_name:
     shell:
         "workflow/scripts/extract_gisaid_metadata_by_seq_name/extract_gisaid_metadata_by_seq_name.sh -i {input.seqids} -m {input.gisaid} -o {output}"
 
+
 rule extract_nextclade_sequences:
     input:
         seqids="results/subsampled_passed_seq_ids.txt",
-        fasta="results/gisaid_subsampled_seqs/subsampled_sequences.fasta"
+        fasta="results/gisaid_subsampled_seqs/subsampled_sequences.fasta",
     output:
-        "results/subsampled_passed_sequences.fasta"
+        "results/subsampled_passed_sequences.fasta",
     log:
-        "logs/extract_nextclade_sequences.log"
+        "logs/extract_nextclade_sequences.log",
     benchmark:
         "benchmarks/extract_nextclade_sequences.txt"
     conda:
@@ -141,14 +124,19 @@ rule extract_nextclade_sequences:
     shell:
         "workflow/scripts/extract_nextclade_sequences/extract_nextclade_sequences.sh -i {input.seqids} -m {input.fasta} -o {output}"
 
+
 rule add_reference_sequence:
     input:
-        ref=expand("results/{outdir}{infile}", outdir=config["reference_seqs"]["outdir"], infile=config["reference_seqs"]["infile"]),
-        clean="results/subsampled_passed_sequences.fasta"
+        ref=expand(
+            "results/{outdir}{infile}",
+            outdir=config["get_reference_seqs"]["outdir"],
+            infile=config["get_reference_seqs"]["infile"],
+        ),
+        clean="results/subsampled_passed_sequences.fasta",
     output:
-        "results/subsampled_passed_sequences_refAdded.fasta"
+        "results/subsampled_passed_sequences_refAdded.fasta",
     log:
-        "logs/add_reference_sequence.log"
+        "logs/add_reference_sequence.log",
     benchmark:
         "benchmarks/add_reference_sequence.txt"
     conda:
@@ -156,13 +144,14 @@ rule add_reference_sequence:
     shell:
         "cat {input.ref} {input.clean} > {output}"
 
+
 rule nextalign:
     input:
-        "results/subsampled_passed_sequences_refAdded.fasta"
+        "results/subsampled_passed_sequences_refAdded.fasta",
     output:
-        "results/nextalign.fasta"
+        "results/nextalign.fasta",
     log:
-        "logs/nextalign.log"
+        "logs/nextalign.log",
     benchmark:
         "benchmarks/nextalign.txt"
     conda:
@@ -170,42 +159,70 @@ rule nextalign:
     shell:
         "workflow/scripts/nextalign/run_nextalign.sh -i {input}"
 
+
 module get_reference_seqs:
     snakefile:
         github(
-            "jsbrittain/phylo-manager",
-            path="workflow/modules/get_remote_file.snk",
+            "jsbrittain/snakeshack",
+            path="workflows/OxfordPhyloGenetics/get_remote_file/workflow/Snakefile",
             branch="main",
         )
-    config: config["reference_seqs"]
+    config:
+        config["get_reference_seqs"]
+
+
 use rule * from get_reference_seqs as get_reference_seqs_*
+
 
 module get_owid:
     snakefile:
         github(
-            "jsbrittain/phylo-manager",
-            path="workflow/modules/get_remote_file.snk",
+            "jsbrittain/snakeshack",
+            path="workflows/OxfordPhyloGenetics/get_remote_file/workflow/Snakefile",
             branch="main",
         )
-    config: config["owid"]
+    config:
+        config["get_owid"]
+
+
 use rule * from get_owid as get_owid_*
+
 
 module get_gisaid:
     snakefile:
         github(
-            "jsbrittain/phylo-manager",
-            path="workflow/modules/get_remote_file.snk",
+            "jsbrittain/snakeshack",
+            path="workflows/OxfordPhyloGenetics/get_remote_file/workflow/Snakefile",
             branch="main",
         )
-    config: config["gisaid"]
+    config:
+        config["get_gisaid"]
+
+
 use rule * from get_gisaid as get_gisaid_*
+
 
 module get_gisaid_subsampled_seqs:
     snakefile:
         github(
-            "jsbrittain/phylo-manager",
-            path="workflow/modules/get_remote_file.snk",
-            commit="4867c3a",
+            "jsbrittain/snakeshack",
+            path="workflows/OxfordPhyloGenetics/get_remote_file/workflow/Snakefile",
+            branch="main",
         )
-    config: config["gisaid_subsampled_seqs"]
+    config:
+        config["get_gisaid_subsampled_seqs"]
+
+
 use rule * from get_gisaid_subsampled_seqs as get_gisaid_subsampled_seqs_*
+
+module gisaid:
+    snakefile:
+        github(
+            "jsbrittain/snakeshack",
+            path="workflows/OxfordPhyloGenetics/gisaid/workflow/Snakefile",
+            branch="main",
+        )
+    config:
+        config["gisaid"]
+
+use rule * from gisaid as gisaid_*
