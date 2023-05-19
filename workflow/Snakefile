@@ -7,73 +7,12 @@ rule all:
             outdir=config["seq_accessions"]["output_namespace"],
             outfile=config["seq_accessions"]["output_filename"],
         ),
-        "results/nextalign.fasta",
-    default_target: True
-
-rule extract_nextclade_seq_names:
-    input:
-        "results/nextclade/nextclade.tsv",
-    output:
-        "results/extract_nextclade_seq_names/subsampled_passed_seq_ids.txt",
-    log:
-        "logs/extract_nextclade_seq_names.log",
-    benchmark:
-        "benchmarks/extract_nextclade_seq_names.txt"
-    conda:
-        "envs/extract_nextclade_seq_names.yaml"
-    shell:
-        "workflow/scripts/extract_nextclade_seq_names/extract_nextclade_seq_names.sh -i {input} -o {output}"
-
-
-rule extract_nextclade_sequences:
-    input:
-        seqids="results/extract_nextclade_seq_names/subsampled_passed_seq_ids.txt",
-        fasta="results/gisaid_subsampled_seqs/subsampled_sequences.fasta",
-    output:
-        "results/subsampled_passed_sequences.fasta",
-    log:
-        "logs/extract_nextclade_sequences.log",
-    benchmark:
-        "benchmarks/extract_nextclade_sequences.txt"
-    conda:
-        "envs/extract_nextclade_sequences.yaml"
-    shell:
-        "workflow/scripts/extract_nextclade_sequences/extract_nextclade_sequences.sh -i {input.seqids} -m {input.fasta} -o {output}"
-
-
-rule add_reference_sequence:
-    input:
-        ref=expand(
-            "results/{outdir}{infile}",
-            outdir=config["get_reference_seqs"]["outdir"],
-            infile=config["get_reference_seqs"]["infile"],
+        expand(
+            "results/{outdir}/{outfile}",
+            outdir=config["nextalign"]["output_namespace"],
+            outfile=config["nextalign"]["output_filename"],
         ),
-        clean="results/subsampled_passed_sequences.fasta",
-    output:
-        "results/subsampled_passed_sequences_refAdded.fasta",
-    log:
-        "logs/add_reference_sequence.log",
-    benchmark:
-        "benchmarks/add_reference_sequence.txt"
-    conda:
-        "envs/add_reference_sequence.yaml"
-    shell:
-        "cat {input.ref} {input.clean} > {output}"
-
-
-rule nextalign:
-    input:
-        "results/subsampled_passed_sequences_refAdded.fasta",
-    output:
-        "results/nextalign.fasta",
-    log:
-        "logs/nextalign.log",
-    benchmark:
-        "benchmarks/nextalign.txt"
-    conda:
-        "envs/nextalign.yaml"
-    shell:
-        "workflow/scripts/nextalign/run_nextalign.sh -i {input}"
+    default_target: True
 
 
 module get_reference_seqs:
@@ -202,3 +141,51 @@ module extract_gisaid_by_seq_name:
         config["extract_gisaid_by_seq_name"]
 
 use rule * from extract_gisaid_by_seq_name as extract_gisaid_by_seq_name_*
+
+module extract_nextclade_seq_names:
+    snakefile:
+        github(
+            "jsbrittain/snakeshack",
+            path="workflows/OxfordPhyloGenetics/modules/extract_nextclade_seq_names/workflow/Snakefile",
+            branch="main",
+        )
+    config:
+        config["extract_nextclade_seq_names"]
+
+use rule * from extract_nextclade_seq_names as extract_nextclade_seq_names_*
+
+module extract_nextclade_sequences:
+    snakefile:
+        github(
+            "jsbrittain/snakeshack",
+            path="workflows/OxfordPhyloGenetics/modules/extract_nextclade_sequences/workflow/Snakefile",
+            branch="main",
+        )
+    config:
+        config["extract_nextclade_sequences"]
+
+use rule * from extract_nextclade_sequences as extract_nextclade_sequences_*
+
+module add_reference_sequence:
+    snakefile:
+        github(
+            "jsbrittain/snakeshack",
+            path="workflows/OxfordPhyloGenetics/modules/add_reference_sequence/workflow/Snakefile",
+            branch="main",
+        )
+    config:
+        config["add_reference_sequence"]
+
+use rule * from add_reference_sequence as add_reference_sequence_*
+
+module nextalign:
+    snakefile:
+        github(
+            "jsbrittain/snakeshack",
+            path="workflows/OxfordPhyloGenetics/modules/nextalign/workflow/Snakefile",
+            branch="main",
+        )
+    config:
+        config["nextalign"]
+
+use rule * from nextalign as nextalign_*

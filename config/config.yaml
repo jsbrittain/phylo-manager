@@ -67,3 +67,35 @@ extract_gisaid_by_seq_name :
     gisaid : "subsampled_gisaid_metadata.tsv"
   output_namespace : "extract_gisaid_by_seq_name"
   output_filename : "selected_gisaid_metadata.txt"
+
+extract_nextclade_seq_names :
+  input_namespace : "nextclade"
+  input_filename : "nextclade.tsv"
+  output_namespace : "extract_nextclade_seq_names"
+  output_filename : "subsampled_passed_seq_ids.txt"
+
+extract_nextclade_sequences :
+  input_namespace :
+    seqids : "extract_nextclade_seq_names"
+    fasta : "gisaid_subsampled_seqs"
+  input_filename :
+    seqids : "subsampled_passed_seq_ids.txt"
+    fasta : "subsampled_sequences.fasta"
+  output_namespace : "extract_nextclade_sequences"
+  output_filename : "subsampled_passed_sequences.fasta"
+
+add_reference_sequence :
+  input_namespace :
+    ref : "reference_seqs"
+    clean : "extract_nextclade_sequences"
+  input_filename :
+    ref : "reference.fasta"
+    clean : "subsampled_passed_sequences.fasta"
+  output_namespace : "add_reference_sequence"
+  output_filename : "subsampled_passed_sequences_refAdded.fasta"
+
+nextalign :
+  input_namespace : "add_reference_sequence"
+  input_filename : "subsampled_passed_sequences_refAdded.fasta"
+  output_namespace : "nextalign"
+  output_filename : "nextalign.fasta"
