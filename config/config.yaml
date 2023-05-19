@@ -20,9 +20,9 @@ get_gisaid_subsampled_seqs : # Temporary - should be generated as part of workfl
   address : "https://www.dropbox.com/s/jzljyxbedesm5k3/subsampled_sequences_Delta_n5000_2020-08_2021-08.fasta?dl=1"
 
 gisaid :
-  input_namespace : "results/gisaid/"
+  input_namespace : "gisaid/"
   input_filename : "gisaid_metadata_2022-03-04.tsv"
-  output_namespace : "results/gisaid_subsampled_seqs/"
+  output_namespace : "gisaid_subsampled_seqs/"
   output_filename : "processed_gisaid_metadata.tsv"
 
 subsampling :
