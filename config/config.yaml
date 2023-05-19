@@ -20,13 +20,50 @@ get_gisaid_subsampled_seqs : # Temporary - should be generated as part of workfl
   address : "https://www.dropbox.com/s/jzljyxbedesm5k3/subsampled_sequences_Delta_n5000_2020-08_2021-08.fasta?dl=1"
 
 gisaid :
-  input_namespace : "gisaid/"
+  input_namespace : "gisaid"
   input_filename : "gisaid_metadata_2022-03-04.tsv"
-  output_namespace : "gisaid_subsampled_seqs/"
+  output_namespace : "gisaid_subsampled_seqs"
   output_filename : "processed_gisaid_metadata.tsv"
 
-subsampling :
-  variant : "Delta"
-  target_number_of_sequences : 5000
-  start_month : "2020-08"
-  end_month : "2021-08"
+subsample_gis_owid :
+  input_namespace :
+    gis : "gisaid_subsampled_seqs"
+    owid : "processed_owid_case_data"
+  input_filename :
+    gis : "processed_gisaid_metadata.tsv"
+    owid : "processed_owid_case_data.csv"
+  output_namespace : "subsample_gis_owid"
+  output_filename : "subsampled_gisaid_metadata.tsv"
+  subsampling :
+    variant : "Delta"
+    target_number_of_sequences : 5000
+    start_month : "2020-08"
+    end_month : "2021-08"
+
+seq_accessions :
+  input_namespace : "subsample_gis_owid"
+  input_filename : "subsampled_gisaid_metadata.tsv"
+  output_namespace : "seq_accessions"
+  output_filename : "subsampled_sequence_ids.txt"
+
+process_owid_case_data :
+  input_namespace : "owid"
+  input_filename : "owid-covid-data.csv"
+  output_namespace : "processed_owid_case_data"
+  output_filename : "processed_owid_case_data.csv"
+
+nextclade :
+  input_namespace : "gisaid_subsampled_seqs"
+  input_filename : "subsampled_sequences.fasta"
+  output_namespace : "nextclade"
+  output_filename : "nextclade.tsv"
+
+extract_gisaid_by_seq_name :
+  input_namespace :
+    seqids : "extract_nextclade_seq_names"
+    gisaid : "subsample_gis_owid"
+  input_filename :
+    seqids : "subsampled_pass_seq_ids.txt"
+    gisaid : "subsampled_gisaid_metadata.tsv"
+  output_namespace : "extract_gisaid_by_seq_name"
+  output_filename : "selected_gisaid_metadata.txt"
