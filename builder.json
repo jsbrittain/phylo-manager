@@ -1,0 +1,321 @@
+[
+  {
+    "name": "owid",
+    "type": "Module",
+    "config": {
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/get_remote_file/workflow/Snakefile",
+      "namespaces": {
+        "input_filename" : null,
+        "output_filename" : "owid-covid-data.csv"
+      },
+      "params": {
+          "address" : "https://www.dropbox.com/s/x8yvgjd7ug1gbxg/owid-covid-data.csv?dl=1"
+      }
+    }
+  },
+  {
+    "name": "gisaid",
+    "type": "Module",
+    "config": {
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/get_remote_file/workflow/Snakefile",
+      "namespaces": {
+        "input_filename" : null,
+        "output_filename" : "gisaid_metadata_2022-03-04.tsv"
+      },
+      "params": {
+          "address" : "https://www.dropbox.com/s/bfiq33slgar0fo7/gisaid_metadata_2022-03-04.tar.gz?dl=1"
+      }
+    }
+  },
+  {
+    "name": "reference_seqs",
+    "type": "Module",
+    "config": {
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/get_remote_file/workflow/Snakefile",
+      "namespaces": {
+        "input_filename" : null,
+        "output_filename" : "reference.fasta"
+      },
+      "params": {
+          "address" : "https://www.dropbox.com/s/comc2vv39m3mdao/reference.fasta?dl=1",
+          "origin" : "https://www.ncbi.nlm.nih.gov/nuccore/MN908947"
+      }
+    }
+  },
+  {
+    "name": "get_gisaid_subsampled_seqs",
+    "type": "Module",
+    "config": {
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/get_remote_file/workflow/Snakefile",
+      "namespaces": {
+        "input_filename" : null,
+        "output_filename" : "subsampled_sequences.fasta"
+      },
+      "params": {
+          "address" : "https://www.dropbox.com/s/jzljyxbedesm5k3/subsampled_sequences_Delta_n5000_2020-08_2021-08.fasta?dl=1"
+      }
+    }
+  },
+  {
+    "name": "gisaid_subsampled_seqs",
+    "type": "Module",
+    "config": {
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/gisaid/workflow/Snakefile",
+      "namespaces": {
+        "input_filename" : "gisaid_metadata_2022-03-04.tsv",
+        "output_filename" : "processed_gisaid_metadata.tsv"
+      },
+      "params": {}
+    }
+  },
+  {
+    "name": "subsample_gis_owid",
+    "type": "Module",
+    "config": {
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/subsample_gis_owid/workflow/Snakefile",
+      "namespaces": {
+        "input_filename" : {
+          "gis" : "processed_gisaid_metadata.tsv",
+          "owid" : "processed_owid_case_data.csv"
+        },
+        "output_filename" : "subsampled_gisaid_metadata.tsv"
+      },
+      "params": {
+        "subsampling" : {
+          "variant" : "Delta",
+          "target_number_of_sequences" : 5000,
+          "start_month" : "2020-08",
+          "end_month" : "2021-08"
+        }
+      }
+    }
+  },
+  {
+    "name": "seq_accessions",
+    "type": "Module",
+    "config": {
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/seq_accessions/workflow/Snakefile",
+      "namespaces": {
+        "input_filename" : "subsampled_gisaid_metadata.tsv",
+        "output_filename" : "subsampled_sequence_ids.txt"
+      },
+      "params": {}
+    }
+  },
+  {
+    "name": "process_owid_case_data",
+    "type": "Module",
+    "config": {
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/process_owid_case_data/workflow/Snakefile",
+      "namespaces": {
+        "input_filename" : "owid-covid-data.csv",
+        "output_filename" : "processed_owid_case_data.csv"
+      },
+      "params": {}
+    }
+  },
+  {
+    "name": "nextclade",
+    "type": "Module",
+    "config": {
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/nextclade/workflow/Snakefile",
+      "namespaces": {
+        "input_filename" : "subsampled_sequences.fasta",
+        "output_filename" : "nextclade.tsv"
+      },
+      "params": {}
+    }
+  },
+  {
+    "name": "extract_gisaid_by_seq_name",
+    "type": "Module",
+    "config": {
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/extract_gisaid_by_seq_name/workflow/Snakefile",
+      "namespaces": {
+        "input_filename" : {
+          "seqids" : "subsampled_passed_seq_ids.txt",
+          "gisaid" : "subsampled_gisaid_metadata.tsv"
+        },
+        "output_filename" : "selected_gisaid_metadata.txt"
+      },
+      "params": {}
+    }
+  },
+  {
+    "name": "extract_nextclade_seq_names",
+    "type": "Module",
+    "config": {
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/extract_nextclade_seq_names/workflow/Snakefile",
+      "namespaces": {
+        "input_filename" : "nextclade.tsv",
+        "output_filename" : "subsampled_passed_seq_ids.txt"
+      },
+      "params": {}
+    }
+  },
+  {
+    "name": "extract_nextclade_sequences",
+    "type": "Module",
+    "config": {
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/extract_nextclade_sequences/workflow/Snakefile",
+      "namespaces": {
+        "input_filename" : {
+          "seqids" : "subsampled_passed_seq_ids.txt",
+          "fasta" : "subsampled_sequences.fasta"
+        },
+        "output_filename" : "subsampled_passed_sequences.fasta"
+      },
+      "params": {}
+    }
+  },
+  {
+    "name": "add_reference_sequence",
+    "type": "Module",
+    "config": {
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/add_reference_sequence/workflow/Snakefile",
+      "namespaces": {
+        "input_filename" : {
+          "ref" : "reference.fasta",
+          "clean" : "subsampled_passed_sequences.fasta"
+        },
+        "output_filename" : "subsampled_passed_sequences_refAdded.fasta"
+      },
+      "params": {}
+    }
+  },
+  {
+    "name": "nextalign",
+    "type": "Module",
+    "config": {
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/nextalign/workflow/Snakefile",
+      "namespaces": {
+        "input_filename" : "subsampled_passed_sequences_refAdded.fasta",
+        "output_filename" : "nextalign.fasta"
+      },
+      "params": {}
+    }
+  },
+  {
+    "name": "Join [gisaid=gisaid_subsampled_seqs]",
+    "type": "Connector",
+    "config": {
+      "url": null,
+      "map": [
+        "gisaid",
+        "gisaid_subsampled_seqs"
+      ]
+    }
+  },
+  {
+    "name": "Join [->subsample_gis_owid]",
+    "type": "Connector",
+    "config": {
+      "url": null,
+      "map": [
+        {
+          "gis" : "gisaid_subsampled_seqs",
+          "owid" : "process_owid_case_data"
+        },
+        "subsample_gis_owid"
+      ]
+    }
+  },
+  {
+    "name": "Join [subsample_gis_aid=seq_accessions]",
+    "type": "Connector",
+    "config": {
+      "url": null,
+      "map": [
+        "subsample_gis_owid",
+        "seq_accessions"
+      ]
+    }
+  },
+  {
+    "name": "Join [owid=process_owid_case_data]",
+    "type": "Connector",
+    "config": {
+      "url": null,
+      "map": [
+        "owid",
+        "process_owid_case_data"
+      ]
+    }
+  },
+  {
+    "name": "Join [gisaid_subsampled_seqs=nextclade]",
+    "type": "Connector",
+    "config": {
+      "url": null,
+      "map": [
+        "get_gisaid_subsampled_seqs",
+        "nextclade"
+      ]
+    }
+  },
+  {
+    "name": "Join [->extract_gisaid_by_seq_name]",
+    "type": "Connector",
+    "config": {
+      "url": null,
+      "map": [
+        {
+          "seqids" : "extract_nextclade_seq_names",
+          "gisaid" : "subsample_gis_owid"
+        },
+        "extract_gisaid_by_seq_name"
+      ]
+    }
+  },
+  {
+    "name": "Join [nextclade=extract_nextclade_seq_names]",
+    "type": "Connector",
+    "config": {
+      "url": null,
+      "map": [
+        "nextclade",
+        "extract_nextclade_seq_names"
+      ]
+    }
+  },
+  {
+    "name": "Join [->extract_nextclade_sequences]",
+    "type": "Connector",
+    "config": {
+      "url": null,
+      "map": [
+        {
+          "seqids" : "extract_nextclade_seq_names",
+          "fasta" : "get_gisaid_subsampled_seqs"
+        },
+        "extract_nextclade_sequences"
+      ]
+    }
+  },
+  {
+    "name": "Join [->add_reference_sequence]",
+    "type": "Connector",
+    "config": {
+      "url": null,
+      "map": [
+        {
+          "ref": "reference_seqs",
+          "clean": "extract_nextclade_sequences"
+        },
+        "add_reference_sequence"
+      ]
+    }
+  },
+  {
+    "name": "Join [add_reference_sequence=nextalign]",
+    "type": "Connector",
+    "config": {
+      "url": null,
+      "map": [
+        "add_reference_sequence",
+        "nextalign"
+      ]
+    }
+  }
+
+]

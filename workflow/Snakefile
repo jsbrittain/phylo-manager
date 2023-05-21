@@ -14,7 +14,6 @@ rule all:
         ),
     default_target: True
 
-
 module get_reference_seqs:
     snakefile:
         github(
@@ -25,9 +24,7 @@ module get_reference_seqs:
     config:
         config["get_reference_seqs"]
 
-
 use rule * from get_reference_seqs as get_reference_seqs_*
-
 
 module get_owid:
     snakefile:
@@ -39,9 +36,7 @@ module get_owid:
     config:
         config["get_owid"]
 
-
 use rule * from get_owid as get_owid_*
-
 
 module get_gisaid:
     snakefile:
@@ -53,9 +48,7 @@ module get_gisaid:
     config:
         config["get_gisaid"]
 
-
 use rule * from get_gisaid as get_gisaid_*
-
 
 module get_gisaid_subsampled_seqs:
     snakefile:
@@ -66,7 +59,6 @@ module get_gisaid_subsampled_seqs:
         )
     config:
         config["get_gisaid_subsampled_seqs"]
-
 
 use rule * from get_gisaid_subsampled_seqs as get_gisaid_subsampled_seqs_*
 
