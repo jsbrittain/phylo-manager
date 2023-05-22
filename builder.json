@@ -1,9 +1,9 @@
 [
   {
-    "name": "owid",
+    "name": "get_owid",
     "type": "Module",
     "config": {
-      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/get_remote_file/workflow/Snakefile",
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/sources/get_owid/workflow/Snakefile",
       "params": {
         "address" : "https://www.dropbox.com/s/x8yvgjd7ug1gbxg/owid-covid-data.csv?dl=1",
         "output_filename" : "owid-covid-data.csv"
@@ -11,10 +11,10 @@
     }
   },
   {
-    "name": "gisaid",
+    "name": "get_gisaid",
     "type": "Module",
     "config": {
-      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/get_remote_file/workflow/Snakefile",
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/sources/get_gisaid/workflow/Snakefile",
       "params": {
         "address" : "https://www.dropbox.com/s/bfiq33slgar0fo7/gisaid_metadata_2022-03-04.tar.gz?dl=1",
         "output_filename" : "gisaid_metadata.tsv"
@@ -22,10 +22,10 @@
     }
   },
   {
-    "name": "reference_seqs",
+    "name": "get_reference_seqs",
     "type": "Module",
     "config": {
-      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/get_remote_file/workflow/Snakefile",
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/sources/get_reference_seqs/workflow/Snakefile",
       "params": {
         "address" : "https://www.dropbox.com/s/comc2vv39m3mdao/reference.fasta?dl=1",
         "origin" : "https://www.ncbi.nlm.nih.gov/nuccore/MN908947",
@@ -37,7 +37,7 @@
     "name": "get_gisaid_subsampled_seqs",
     "type": "Module",
     "config": {
-      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/modules/get_remote_file/workflow/Snakefile",
+      "url": "../../../snakeshack/workflows/OxfordPhyloGenetics/sources/get_gisaid_subsampled_seqs/workflow/Snakefile",
       "params": {
         "address" : "https://www.dropbox.com/s/jzljyxbedesm5k3/subsampled_sequences_Delta_n5000_2020-08_2021-08.fasta?dl=1",
         "output_filename" : "subsampled_sequences.fasta"
@@ -155,7 +155,7 @@
     "type": "Connector",
     "config": {
       "map": [
-        "gisaid",
+        "get_gisaid",
         "gisaid_subsampled_seqs"
       ]
     }
@@ -188,7 +188,7 @@
     "type": "Connector",
     "config": {
       "map": [
-        "owid",
+        "get_owid",
         "process_owid_case_data"
       ]
     }
@@ -245,7 +245,7 @@
     "config": {
       "map": [
         {
-          "ref": "reference_seqs",
+          "ref": "get_reference_seqs",
           "clean": "extract_nextclade_sequences"
         },
         "add_reference_sequence"
