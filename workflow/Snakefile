@@ -18,7 +18,7 @@ module get_reference_seqs:
     snakefile:
         github(
             "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/modules/get_remote_file/workflow/Snakefile",
+            path="workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow/Snakefile",
             branch="main",
         )
     config:
@@ -30,7 +30,7 @@ module get_owid:
     snakefile:
         github(
             "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/modules/get_remote_file/workflow/Snakefile",
+            path="workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow/Snakefile",
             branch="main",
         )
     config:
@@ -42,7 +42,7 @@ module get_gisaid:
     snakefile:
         github(
             "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/modules/get_remote_file/workflow/Snakefile",
+            path="workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow/Snakefile",
             branch="main",
         )
     config:
@@ -54,7 +54,7 @@ module get_gisaid_subsampled_seqs:
     snakefile:
         github(
             "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/modules/get_remote_file/workflow/Snakefile",
+            path="workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow/Snakefile",
             branch="main",
         )
     config:
