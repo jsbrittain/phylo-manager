@@ -4,180 +4,124 @@ rule all:
     input:
         expand(
             "results/{outdir}/{outfile}",
-            outdir=config["seq_accessions"]["output_namespace"],
-            outfile=config["seq_accessions"]["output_filename"],
+            outdir=config["seq_accessions"]["config"]["output_namespace"],
+            outfile=config["seq_accessions"]["config"]["output_filename"],
         ),
         expand(
             "results/{outdir}/{outfile}",
-            outdir=config["nextalign"]["output_namespace"],
-            outfile=config["nextalign"]["output_filename"],
+            outdir=config["nextalign"]["config"]["output_namespace"],
+            outfile=config["nextalign"]["config"]["output_filename"],
         ),
     default_target: True
 
 module get_reference_seqs:
     snakefile:
-        github(
-            "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow/Snakefile",
-            branch="main",
-        )
+        eval(config["get_reference_seqs"]["snakefile"])
     config:
-        config["get_reference_seqs"]
+        config["get_reference_seqs"]["config"]
 
 use rule * from get_reference_seqs as get_reference_seqs_*
 
 module get_owid:
     snakefile:
-        github(
-            "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow/Snakefile",
-            branch="main",
-        )
+        eval(config["get_owid"]["snakefile"])
     config:
-        config["get_owid"]
+        config["get_owid"]["config"]
 
 use rule * from get_owid as get_owid_*
 
 module get_gisaid:
     snakefile:
-        github(
-            "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow/Snakefile",
-            branch="main",
-        )
+        eval(config["get_gisaid"]["snakefile"])
     config:
-        config["get_gisaid"]
+        config["get_gisaid"]["config"]
 
 use rule * from get_gisaid as get_gisaid_*
 
 module get_gisaid_subsampled_seqs:
     snakefile:
-        github(
-            "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow/Snakefile",
-            branch="main",
-        )
+        eval(config["get_gisaid_subsampled_seqs"]["snakefile"])
     config:
-        config["get_gisaid_subsampled_seqs"]
+        config["get_gisaid_subsampled_seqs"]["config"]
 
 use rule * from get_gisaid_subsampled_seqs as get_gisaid_subsampled_seqs_*
 
 module gisaid:
     snakefile:
-        github(
-            "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/modules/gisaid/workflow/Snakefile",
-            branch="main",
-        )
+        eval(config["gisaid"]["snakefile"])
     config:
-        config["gisaid"]
+        config["gisaid"]["config"]
 
 use rule * from gisaid as gisaid_*
 
 module subsample_gis_owid:
     snakefile:
-        github(
-            "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/modules/subsample_gis_owid/workflow/Snakefile",
-            branch="main",
-        )
+        eval(config["subsample_gis_owid"]["snakefile"])
     config:
-        config["subsample_gis_owid"]
+        config["subsample_gis_owid"]["config"]
 
 use rule * from subsample_gis_owid as subsample_gisaid_owid_*
 
 module seq_accessions:
     snakefile:
-        github(
-            "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/modules/seq_accessions/workflow/Snakefile",
-            branch="main",
-        )
+        eval(config["seq_accessions"]["snakefile"])
     config:
-        config["seq_accessions"]
+        config["seq_accessions"]["config"]
 
 use rule * from seq_accessions as seq_accessions_*
 
 module process_owid_case_data:
     snakefile:
-        github(
-            "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/modules/process_owid_case_data/workflow/Snakefile",
-            branch="main",
-        )
+        eval(config["process_owid_case_data"]["snakefile"])
     config:
-        config["process_owid_case_data"]
+        config["process_owid_case_data"]["config"]
 
 use rule * from process_owid_case_data as process_owid_case_data_*
 
 module nextclade:
     snakefile:
-        github(
-            "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/modules/nextclade/workflow/Snakefile",
-            branch="main",
-        )
+        eval(config["nextclade"]["snakefile"])
     config:
-        config["nextclade"]
+        config["nextclade"]["config"]
 
 use rule * from nextclade as nextclade_*
 
 module extract_gisaid_by_seq_name:
     snakefile:
-        github(
-            "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/modules/extract_gisaid_by_seq_name/workflow/Snakefile",
-            branch="main",
-        )
+        eval(config["extract_gisaid_by_seq_name"]["snakefile"])
     config:
-        config["extract_gisaid_by_seq_name"]
+        config["extract_gisaid_by_seq_name"]["config"]
 
 use rule * from extract_gisaid_by_seq_name as extract_gisaid_by_seq_name_*
 
 module extract_nextclade_seq_names:
     snakefile:
-        github(
-            "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/modules/extract_nextclade_seq_names/workflow/Snakefile",
-            branch="main",
-        )
+        eval(config["extract_nextclade_seq_names"]["snakefile"])
     config:
-        config["extract_nextclade_seq_names"]
+        config["extract_nextclade_seq_names"]["config"]
 
 use rule * from extract_nextclade_seq_names as extract_nextclade_seq_names_*
 
 module extract_nextclade_sequences:
     snakefile:
-        github(
-            "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/modules/extract_nextclade_sequences/workflow/Snakefile",
-            branch="main",
-        )
+        eval(config["extract_nextclade_sequences"]["snakefile"])
     config:
-        config["extract_nextclade_sequences"]
+        config["extract_nextclade_sequences"]["config"]
 
 use rule * from extract_nextclade_sequences as extract_nextclade_sequences_*
 
 module add_reference_sequence:
     snakefile:
-        github(
-            "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/modules/add_reference_sequence/workflow/Snakefile",
-            branch="main",
-        )
+        eval(config["add_reference_sequence"]["snakefile"])
     config:
-        config["add_reference_sequence"]
+        config["add_reference_sequence"]["config"]
 
 use rule * from add_reference_sequence as add_reference_sequence_*
 
 module nextalign:
     snakefile:
-        github(
-            "jsbrittain/snakeshack",
-            path="workflows/OxfordPhyloGenetics/modules/nextalign/workflow/Snakefile",
-            branch="main",
-        )
+        eval(config["nextalign"]["snakefile"])
     config:
-        config["nextalign"]
+        config["nextalign"]["config"]
 
 use rule * from nextalign as nextalign_*

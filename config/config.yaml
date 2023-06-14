@@ -1,101 +1,199 @@
 get_owid :
-  output_filename : "owid-covid-data.csv"
-  output_namespace : "owid"
-  address : "https://www.dropbox.com/s/x8yvgjd7ug1gbxg/owid-covid-data.csv?dl=1"
+  snakefile: |-
+    github(
+        "jsbrittain/snakeshack",
+        path="workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow/Snakefile",
+        branch="main",
+    )
+  config:
+    output_filename : "owid-covid-data.csv"
+    output_namespace : "owid"
+    address : "https://www.dropbox.com/s/x8yvgjd7ug1gbxg/owid-covid-data.csv?dl=1"
 
 get_gisaid :
-  output_filename : "gisaid_metadata.tsv"
-  output_namespace : "gisaid"
-  address : "https://www.dropbox.com/s/bfiq33slgar0fo7/gisaid_metadata_2022-03-04.tar.gz?dl=1"
+  snakefile: |-
+    github(
+        "jsbrittain/snakeshack",
+        path="workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow/Snakefile",
+        branch="main",
+    )
+  config:
+    output_filename : "gisaid_metadata.tsv"
+    output_namespace : "gisaid"
+    address : "https://www.dropbox.com/s/bfiq33slgar0fo7/gisaid_metadata_2022-03-04.tar.gz?dl=1"
 
 get_reference_seqs :
-  output_filename : "reference.fasta"
-  output_namespace : "reference_seqs"
-  address : "https://www.dropbox.com/s/comc2vv39m3mdao/reference.fasta?dl=1"
-  origin : "https://www.ncbi.nlm.nih.gov/nuccore/MN908947"
+  snakefile: |-
+    github(
+        "jsbrittain/snakeshack",
+        path="workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow/Snakefile",
+        branch="main",
+    )
+  config:
+    output_filename : "reference.fasta"
+    output_namespace : "reference_seqs"
+    address : "https://www.dropbox.com/s/comc2vv39m3mdao/reference.fasta?dl=1"
+    origin : "https://www.ncbi.nlm.nih.gov/nuccore/MN908947"
 
 get_gisaid_subsampled_seqs :
-  output_filename : "subsampled_sequences.fasta"
-  output_namespace : "gisaid_subsampled_seqs"
-  address : "https://www.dropbox.com/s/jzljyxbedesm5k3/subsampled_sequences_Delta_n5000_2020-08_2021-08.fasta?dl=1"
+  snakefile: |-
+    github(
+        "jsbrittain/snakeshack",
+        path="workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow/Snakefile",
+        branch="main",
+    )
+  config:
+    output_filename : "subsampled_sequences.fasta"
+    output_namespace : "gisaid_subsampled_seqs"
+    address : "https://www.dropbox.com/s/jzljyxbedesm5k3/subsampled_sequences_Delta_n5000_2020-08_2021-08.fasta?dl=1"
 
 gisaid :
-  input_namespace : "gisaid"
-  input_filename : "gisaid_metadata.tsv"
-  output_namespace : "gisaid_subsampled_seqs"
-  output_filename : "processed_gisaid_metadata.tsv"
+  snakefile: |-
+    github(
+        "jsbrittain/snakeshack",
+        path="workflows/OxfordPhyloGenetics/modules/gisaid/workflow/Snakefile",
+        branch="main",
+    )
+  config:
+    input_namespace : "gisaid"
+    input_filename : "gisaid_metadata.tsv"
+    output_namespace : "gisaid_subsampled_seqs"
+    output_filename : "processed_gisaid_metadata.tsv"
 
 subsample_gis_owid :
-  input_namespace :
-    gis : "gisaid_subsampled_seqs"
-    owid : "processed_owid_case_data"
-  input_filename :
-    gis : "processed_gisaid_metadata.tsv"
-    owid : "processed_owid_case_data.csv"
-  output_namespace : "subsample_gis_owid"
-  output_filename : "subsampled_gisaid_metadata.tsv"
-  subsampling :
-    variant : "Delta"
-    target_number_of_sequences : 5000
-    start_month : "2020-08"
-    end_month : "2021-08"
+  snakefile: |-
+    github(
+        "jsbrittain/snakeshack",
+        path="workflows/OxfordPhyloGenetics/modules/subsample_gis_owid/workflow/Snakefile",
+        branch="main",
+    )
+  config:
+    input_namespace :
+      gis : "gisaid_subsampled_seqs"
+      owid : "processed_owid_case_data"
+    input_filename :
+      gis : "processed_gisaid_metadata.tsv"
+      owid : "processed_owid_case_data.csv"
+    output_namespace : "subsample_gis_owid"
+    output_filename : "subsampled_gisaid_metadata.tsv"
+    subsampling :
+      variant : "Delta"
+      target_number_of_sequences : 5000
+      start_month : "2020-08"
+      end_month : "2021-08"
 
 seq_accessions :
-  input_namespace : "subsample_gis_owid"
-  input_filename : "subsampled_gisaid_metadata.tsv"
-  output_namespace : "seq_accessions"
-  output_filename : "subsampled_sequence_ids.txt"
+  snakefile: |-
+    github(
+        "jsbrittain/snakeshack",
+        path="workflows/OxfordPhyloGenetics/modules/seq_accessions/workflow/Snakefile",
+        branch="main",
+    )
+  config:
+    input_namespace : "subsample_gis_owid"
+    input_filename : "subsampled_gisaid_metadata.tsv"
+    output_namespace : "seq_accessions"
+    output_filename : "subsampled_sequence_ids.txt"
 
 process_owid_case_data :
-  input_namespace : "owid"
-  input_filename : "owid-covid-data.csv"
-  output_namespace : "processed_owid_case_data"
-  output_filename : "processed_owid_case_data.csv"
+  snakefile: |-
+    github(
+        "jsbrittain/snakeshack",
+        path="workflows/OxfordPhyloGenetics/modules/process_owid_case_data/workflow/Snakefile",
+        branch="main",
+    )
+  config:
+    input_namespace : "owid"
+    input_filename : "owid-covid-data.csv"
+    output_namespace : "processed_owid_case_data"
+    output_filename : "processed_owid_case_data.csv"
 
 nextclade :
-  input_namespace : "gisaid_subsampled_seqs"
-  input_filename : "subsampled_sequences.fasta"
-  output_namespace : "nextclade"
-  output_filename : "nextclade.tsv"
+  snakefile: |-
+    github(
+        "jsbrittain/snakeshack",
+        path="workflows/OxfordPhyloGenetics/modules/nextclade/workflow/Snakefile",
+        branch="main",
+    )
+  config:
+    input_namespace : "gisaid_subsampled_seqs"
+    input_filename : "subsampled_sequences.fasta"
+    output_namespace : "nextclade"
+    output_filename : "nextclade.tsv"
 
 extract_gisaid_by_seq_name :
-  input_namespace :
-    seqids : "extract_nextclade_seq_names"
-    gisaid : "subsample_gis_owid"
-  input_filename :
-    seqids : "subsampled_pass_seq_ids.txt"
-    gisaid : "subsampled_gisaid_metadata.tsv"
-  output_namespace : "extract_gisaid_by_seq_name"
-  output_filename : "selected_gisaid_metadata.txt"
+  snakefile: |-
+    github(
+        "jsbrittain/snakeshack",
+        path="workflows/OxfordPhyloGenetics/modules/extract_gisaid_by_seq_name/workflow/Snakefile",
+        branch="main",
+    )
+  config:
+    input_namespace :
+      seqids : "extract_nextclade_seq_names"
+      gisaid : "subsample_gis_owid"
+    input_filename :
+      seqids : "subsampled_pass_seq_ids.txt"
+      gisaid : "subsampled_gisaid_metadata.tsv"
+    output_namespace : "extract_gisaid_by_seq_name"
+    output_filename : "selected_gisaid_metadata.txt"
 
 extract_nextclade_seq_names :
-  input_namespace : "nextclade"
-  input_filename : "nextclade.tsv"
-  output_namespace : "extract_nextclade_seq_names"
-  output_filename : "subsampled_passed_seq_ids.txt"
+  snakefile: |-
+    github(
+        "jsbrittain/snakeshack",
+        path="workflows/OxfordPhyloGenetics/modules/extract_nextclade_seq_names/workflow/Snakefile",
+        branch="main",
+    )
+  config:
+    input_namespace : "nextclade"
+    input_filename : "nextclade.tsv"
+    output_namespace : "extract_nextclade_seq_names"
+    output_filename : "subsampled_passed_seq_ids.txt"
 
 extract_nextclade_sequences :
-  input_namespace :
-    seqids : "extract_nextclade_seq_names"
-    fasta : "gisaid_subsampled_seqs"
-  input_filename :
-    seqids : "subsampled_passed_seq_ids.txt"
-    fasta : "subsampled_sequences.fasta"
-  output_namespace : "extract_nextclade_sequences"
-  output_filename : "subsampled_passed_sequences.fasta"
+  snakefile: |-
+    github(
+        "jsbrittain/snakeshack",
+        path="workflows/OxfordPhyloGenetics/modules/extract_nextclade_sequences/workflow/Snakefile",
+        branch="main",
+    )
+  config:
+    input_namespace :
+      seqids : "extract_nextclade_seq_names"
+      fasta : "gisaid_subsampled_seqs"
+    input_filename :
+      seqids : "subsampled_passed_seq_ids.txt"
+      fasta : "subsampled_sequences.fasta"
+    output_namespace : "extract_nextclade_sequences"
+    output_filename : "subsampled_passed_sequences.fasta"
 
 add_reference_sequence :
-  input_namespace :
-    ref : "reference_seqs"
-    clean : "extract_nextclade_sequences"
-  input_filename :
-    ref : "reference.fasta"
-    clean : "subsampled_passed_sequences.fasta"
-  output_namespace : "add_reference_sequence"
-  output_filename : "subsampled_passed_sequences_refAdded.fasta"
+  snakefile: |-
+    github(
+        "jsbrittain/snakeshack",
+        path="workflows/OxfordPhyloGenetics/modules/add_reference_sequence/workflow/Snakefile",
+        branch="main",
+    )
+  config:
+    input_namespace :
+      ref : "reference_seqs"
+      clean : "extract_nextclade_sequences"
+    input_filename :
+      ref : "reference.fasta"
+      clean : "subsampled_passed_sequences.fasta"
+    output_namespace : "add_reference_sequence"
+    output_filename : "subsampled_passed_sequences_refAdded.fasta"
 
 nextalign :
-  input_namespace : "add_reference_sequence"
-  input_filename : "subsampled_passed_sequences_refAdded.fasta"
-  output_namespace : "nextalign"
-  output_filename : "nextalign.fasta"
+  snakefile: |-
+    github(
+        "jsbrittain/snakeshack",
+        path="workflows/OxfordPhyloGenetics/modules/nextalign/workflow/Snakefile",
+        branch="main",
+    )
+  config:
+    input_namespace : "add_reference_sequence"
+    input_filename : "subsampled_passed_sequences_refAdded.fasta"
+    output_namespace : "nextalign"
+    output_filename : "nextalign.fasta"
